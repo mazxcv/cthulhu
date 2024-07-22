@@ -2,6 +2,7 @@ package main
 
 import (
 	"cthulhu/internal/config"
+	"cthulhu/internal/http-server/handlers/url/save"
 	mwLogger "cthulhu/internal/http-server/middleware/logger"
 	"cthulhu/internal/lib/logger/handlers/slogpretty"
 	"cthulhu/internal/lib/logger/sl"
@@ -24,9 +25,6 @@ func main() {
 	cfg := config.MustLoad()
 	log := setupLogger(cfg.Env)
 	log.Info("Information starting cthulhu", slog.String("env", cfg.Env))
-	log.Debug("Debug starting cthulhu", slog.String("env", cfg.Env))
-	log.Warn("Warning starting cthulhu", slog.String("env", cfg.Env))
-	log.Error("Error starting cthulhu", slog.String("env", cfg.Env))
 
 	storageCTX, err := sqlite.New(cfg.StoragePath)
 	if err != nil {
@@ -42,6 +40,10 @@ func main() {
 	router.Use(mwLogger.New(log))
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.URLFormat)
+
+	router.Post("/url", save.New(log, storageCTX))
+
+	log.Info("starting server", slog.String("address", cfg.Address))
 
 	// TODO: run server
 }
