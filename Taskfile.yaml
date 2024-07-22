@@ -1,0 +1,12 @@
+
+version: "3"
+
+tasks:
+  migrate:
+    desc: "migrate database"
+    cmds:
+      - go run ./cmd/migrator --storage-path=./storage/url-shortener.db --migration-path=./migrations 
+  start:
+    desc: "run program"
+    cmds:
+      - CONFIG_PATH=./config/local.yaml go run cmd/url-shortener/main.go  
