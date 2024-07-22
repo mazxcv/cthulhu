@@ -8,6 +8,7 @@ import (
 	"cthulhu/internal/lib/logger/sl"
 	"cthulhu/internal/storage/sqlite"
 	"log/slog"
+	"net/http"
 	"os"
 
 	"github.com/go-chi/chi/v5"
@@ -45,7 +46,19 @@ func main() {
 
 	log.Info("starting server", slog.String("address", cfg.Address))
 
-	// TODO: run server
+	srv := &http.Server{
+		Addr:         cfg.Address,
+		Handler:      router,
+		ReadTimeout:  cfg.Timeout,
+		WriteTimeout: cfg.Timeout,
+		IdleTimeout:  cfg.IdleTimeout,
+	}
+
+	if err := srv.ListenAndServe(); err != nil {
+		log.Error("failed to start server")
+	}
+
+	log.Error("server stopped")
 }
 
 func setupLogger(env string) *slog.Logger {
