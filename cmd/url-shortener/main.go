@@ -2,6 +2,7 @@ package main
 
 import (
 	"cthulhu/internal/config"
+	mwLogger "cthulhu/internal/http-server/middleware/logger"
 	"cthulhu/internal/lib/logger/sl"
 	"cthulhu/internal/storage/sqlite"
 	"log/slog"
@@ -32,8 +33,8 @@ func main() {
 	router := chi.NewRouter()
 	router.Use(middleware.RequestID)
 	router.Use(middleware.RealIP)
-	// TODO: realize wraper for native logger
-	router.Use(middleware.Logger)
+	router.Use(mwLogger.New(log))
+
 	// TODO: run server
 }
 
