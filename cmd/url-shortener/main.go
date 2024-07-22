@@ -6,6 +6,9 @@ import (
 	"cthulhu/internal/storage/sqlite"
 	"log/slog"
 	"os"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 const (
@@ -26,12 +29,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	_ = storageCTX
-
-	// TODO: init storage/ sqlite
-
-	// TODO: init router/ chi, "chi render"
-
+	router := chi.NewRouter()
+	router.Use(middleware.RequestID)
+	router.Use(middleware.RealIP)
+	// TODO: realize wraper for native logger
+	router.Use(middleware.Logger)
 	// TODO: run server
 }
 
