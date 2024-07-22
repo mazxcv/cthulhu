@@ -2,6 +2,8 @@ package main
 
 import (
 	"cthulhu/internal/config"
+	"cthulhu/internal/lib/logger/sl"
+	"cthulhu/internal/storage/sqlite"
 	"log/slog"
 	"os"
 )
@@ -17,7 +19,14 @@ func main() {
 	cfg := config.MustLoad()
 	log := setupLogger(cfg.Env)
 	log.Info("starting cthulhu", slog.String("env", cfg.Env))
-	log.Debug("debugging messages are enabled")
+
+	storageCTX, err := sqlite.New(cfg.StoragePath)
+	if err != nil {
+		log.Error("failed to init storage", sl.Err(err))
+		os.Exit(1)
+	}
+
+	_ = storageCTX
 
 	// TODO: init storage/ sqlite
 
